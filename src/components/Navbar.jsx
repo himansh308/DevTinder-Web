@@ -1,4 +1,9 @@
+import { useSelector } from "react-redux";
+
 function Navbar() {
+  const user = useSelector((store)=>{
+    return store.user
+  });
   return (
     <>
 
@@ -10,13 +15,15 @@ function Navbar() {
         <div className="dropdown dropdown-hover dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
-              <img alt="profile" src="https://placehold.co/100x100" />
+              <img alt="profile" src={user ? user.photoURl : "https://placehold.co/100x100"} />
             </div>
           </div>
-          <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-            <li><a>Profile</a></li>
-            <li><a>Logout</a></li>
-          </ul>
+          { user && 
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              <li><a>Profile</a></li>
+              <li><a>Logout</a></li>
+            </ul>
+          }
         </div>
       </div>
     </div>

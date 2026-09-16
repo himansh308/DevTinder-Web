@@ -5,6 +5,7 @@ import Body from './components/Body';
 import Home from './components/Home';
 import Signup from './components/Signup';
 import Login from './components/Login';
+import Feed from './components/Feed';
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
         <Route path='/' element={<Home/>}></Route>
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/signup' element={<Signup/>}></Route>
+        <Route path='/feed' element={<Feed/>}></Route>
       </Route>
     </Routes>
     </>
