@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { addFeed } from "../utils/feedSlice";
+import { addFeed, removeUserFromFeed } from "../utils/feedSlice";
 import { useEffect } from "react";
 import UserCard from "./UserCard";
 
@@ -27,6 +27,19 @@ function Feed() {
     }
     
 
+    const handleSendRequest = async(status, userId) =>{
+        try{
+            const sendRequestResponse = await axios.post(`http://localhost:7777/request/send/${status}/${userId}` , {} ,{withCredentials:true})
+
+            if(sendRequestResponse){
+                dispatch(removeUserFromFeed(userId))
+            }
+        }
+        catch(err){
+            console.log(err.message)
+        }
+    }
+
     useEffect(()=>{
 
         fetchFeed();
@@ -37,9 +50,17 @@ function Feed() {
     return(
         <>
         {
-            feed.map((user)=>{
-                return <UserCard key={user._id} user={user}></UserCard>
-            })
+            feed[0] === undefined ? (
+                <h1> You have seen everyone </h1>
+            )
+            : (
+                <UserCard key={feed[0]._id} user={feed[0]}  
+                    onInterested={()=>handleSendRequest("interested" , feed[0]._id)} 
+                    onIgnored ={()=> handleSendRequest("ignored" , feed[0]._id)}>
+                </UserCard>
+            )
+            
+        
         }
         
         </>
