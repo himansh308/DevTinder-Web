@@ -1,0 +1,106 @@
+import axios from "axios";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "../utils/userSlice";
+
+function EditProfile() {
+   const user = useSelector((store)=>{
+       return store.user
+   })
+    const dispatch = useDispatch();
+
+    const [firstName , setFirstName] = useState(user.firstName);
+    const [lastName , setLastName] = useState(user.lastName);
+    const [age , setAge] = useState(user.age);
+    const [photoUrl , setPhotoUrl] = useState(user.photoUrl);
+    const [skills , setSkills] = useState(user.skills ? user.skills.join(", ") : "");
+    const [error, setError] = useState("");
+
+   const previewUserSkills =  skills.split(",").map((skill) => skill.trim()).filter((skill) => skill.length > 0);
+
+   const handleSaveProfileButton = async()=>{
+        setError("");
+        try{
+            const response = await axios.patch('http://localhost:7777/profile/edit' , 
+                {
+                    firstName,
+                    lastName,
+                    age,
+                    photoUrl,
+                    skills:previewUserSkills
+                },
+                {withCredentials:true})
+
+            if(response){
+                dispatch(addUser(response.data.data))
+            }
+        }
+        catch(err){
+            setError(err.response?.data || "Something went wrong")
+        }
+   }
+
+
+    return (
+        <div className="flex flex-wrap justify-center gap-8 mt-10">
+            <div className="card w-96 bg-base-100 shadow-xl">
+                <div className="card-body">
+                    <h2 className="card-title">Edit Profile</h2>
+
+                    <label className="label">First Name</label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered w-full" 
+                        value={firstName}
+                        onChange={(e)=> setFirstName(e.target.value)}
+                    />
+
+                    <label className="label">Last Name</label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered w-full"
+                        value={lastName}
+                        onChange={(e)=> setLastName(e.target.value)}
+                     />
+
+                    <label className="label">Age</label>
+                    <input 
+                        type="number" 
+                        className="input input-bordered w-full" 
+                        value={age}
+                        onChange={(e)=>setAge(e.target.value)}
+                    />
+
+                    <label className="label">Photo URL</label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered w-full" 
+                        value={photoUrl}
+                        onChange={(e)=> setPhotoUrl(e.target.value)}
+                    />
+
+                    <label className="label">Skills (comma separated)</label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered w-full" 
+                        value={skills}
+                        onChange={(e)=> setSkills(e.target.value)}
+                    />
+
+                    {error && <p className="text-error text-sm mt-2">{error}</p>}
+                    
+                    <div className="card-actions justify-center py-4">
+                        <button 
+                            className="btn btn-primary"
+                            onClick={handleSaveProfileButton}
+                        >Save Profile</button>
+                    </div>
+                </div>
+            </div>
+
+            {/* TODO: live UserCard preview here, fed from local form state */}
+        </div>
+    );
+}
+
+export default EditProfile;

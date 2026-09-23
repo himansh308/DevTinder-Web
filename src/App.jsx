@@ -6,6 +6,7 @@ import Home from './components/Home';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import Feed from './components/Feed';
+import EditProfile from './components/EditProfile';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/signup' element={<Signup/>}></Route>
         <Route path='/feed' element={<Feed/>}></Route>
+        <Route path='/profile/edit' element={<EditProfile/>}></Route>
       </Route>
     </Routes>
     </>
