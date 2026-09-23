@@ -1,11 +1,14 @@
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addFeed } from "../utils/feedSlice";
 import { useEffect } from "react";
-
+import UserCard from "./UserCard";
 
 function Feed() {
 
+    const feed = useSelector((store)=>{
+        return store.feed
+    })
     const dispatch = useDispatch();
 
     const fetchFeed = async() =>{
@@ -33,9 +36,12 @@ function Feed() {
 
     return(
         <>
-        <div>
-            This is the Feed Page.
-        </div>
+        {
+            feed.map((user)=>{
+                return <UserCard key={user._id} user={user}></UserCard>
+            })
+        }
+        
         </>
     )
 }
