@@ -27,14 +27,16 @@ function UserCard({ user, onInterested, onIgnored }) {
                     </div>
                 )}
 
-                <div className="card-actions justify-center mt-4 gap-4">
-                    <button className="btn btn-outline" onClick={onIgnored}>
-                        Ignore
-                    </button>
-                    <button className="btn btn-primary" onClick={onInterested}>
-                        Interested
-                    </button>
-                </div>
+                {(onInterested || onIgnored) && (
+                    <div className="card-actions justify-center mt-4 gap-4">
+                        <button className="btn btn-outline" onClick={onIgnored}>
+                            Ignore
+                        </button>
+                        <button className="btn btn-primary" onClick={onInterested}>
+                            Interested
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -1,7 +1,9 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import UserCard from "./UserCard";
+
 
 function EditProfile() {
    const user = useSelector((store)=>{
@@ -9,14 +11,35 @@ function EditProfile() {
    })
     const dispatch = useDispatch();
 
-    const [firstName , setFirstName] = useState(user.firstName);
-    const [lastName , setLastName] = useState(user.lastName);
-    const [age , setAge] = useState(user.age);
-    const [photoUrl , setPhotoUrl] = useState(user.photoUrl);
-    const [skills , setSkills] = useState(user.skills ? user.skills.join(", ") : "");
+    const [firstName , setFirstName] = useState(user?.firstName);
+    const [lastName , setLastName] = useState(user?.lastName);
+    const [age , setAge] = useState(user?.age);
+    const [photoUrl , setPhotoUrl] = useState(user?.photoUrl);
+    const [skills , setSkills] = useState(user?.skills ? user.skills.join(", ") : "");
     const [error, setError] = useState("");
 
-   const previewUserSkills =  skills.split(",").map((skill) => skill.trim()).filter((skill) => skill.length > 0);
+    useEffect(()=>{
+        if(user){
+            setFirstName(user.firstName);
+            setLastName(user.lastName);
+            setAge(user.age);
+            setPhotoUrl(user.photoUrl);
+            setSkills(user.skills ? user.skills.join(", ") : "");
+        }
+    },[user])
+
+    if (!user){
+        return <h1>Loading...</h1>;
+    }
+
+   const previewUser = {
+        firstName,
+        lastName,
+        age,
+        photoUrl,
+        gender: user.gender,
+        skills: skills.split(",").map((skill) => skill.trim()).filter((skill) => skill.length > 0)
+    };
 
    const handleSaveProfileButton = async()=>{
         setError("");
@@ -27,7 +50,7 @@ function EditProfile() {
                     lastName,
                     age,
                     photoUrl,
-                    skills:previewUserSkills
+                    skills:previewUser.skills
                 },
                 {withCredentials:true})
 
@@ -40,7 +63,7 @@ function EditProfile() {
         }
    }
 
-
+   
     return (
         <div className="flex flex-wrap justify-center gap-8 mt-10">
             <div className="card w-96 bg-base-100 shadow-xl">
@@ -79,7 +102,7 @@ function EditProfile() {
                         onChange={(e)=> setPhotoUrl(e.target.value)}
                     />
 
-                    <label className="label">Skills (comma separated)</label>
+                    <label className="label">Skills </label>
                     <input 
                         type="text" 
                         className="input input-bordered w-full" 
@@ -88,7 +111,7 @@ function EditProfile() {
                     />
 
                     {error && <p className="text-error text-sm mt-2">{error}</p>}
-                    
+
                     <div className="card-actions justify-center py-4">
                         <button 
                             className="btn btn-primary"
@@ -98,7 +121,10 @@ function EditProfile() {
                 </div>
             </div>
 
-            {/* TODO: live UserCard preview here, fed from local form state */}
+            
+                
+            <UserCard user={previewUser}></UserCard>
+            
         </div>
     );
 }
