@@ -7,6 +7,7 @@ import Signup from './components/Signup';
 import Login from './components/Login';
 import Feed from './components/Feed';
 import EditProfile from './components/EditProfile';
+import Connections from './components/Connection';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <Route path='/signup' element={<Signup/>}></Route>
         <Route path='/feed' element={<Feed/>}></Route>
         <Route path='/profile/edit' element={<EditProfile/>}></Route>
+        <Route path = '/connections' element={<Connections/>}></Route>
       </Route>
     </Routes>
     </>

@@ -17,6 +17,8 @@ function EditProfile() {
     const [photoUrl , setPhotoUrl] = useState(user?.photoUrl);
     const [skills , setSkills] = useState(user?.skills ? user.skills.join(", ") : "");
     const [error, setError] = useState("");
+    const [showToast , setShowToast] = useState(false);
+
 
     useEffect(()=>{
         if(user){
@@ -56,6 +58,10 @@ function EditProfile() {
 
             if(response){
                 dispatch(addUser(response.data.data))
+                setShowToast(true);
+                setTimeout(()=>{
+                    setShowToast(false);
+                },3000)
             }
         }
         catch(err){
@@ -65,7 +71,8 @@ function EditProfile() {
 
    
     return (
-        <div className="flex flex-wrap justify-center gap-8 mt-10">
+        <>
+            <div className="flex flex-wrap justify-center gap-8 mt-10">
             <div className="card w-96 bg-base-100 shadow-xl">
                 <div className="card-body">
                     <h2 className="card-title">Edit Profile</h2>
@@ -126,6 +133,13 @@ function EditProfile() {
             <UserCard user={previewUser}></UserCard>
             
         </div>
+        {showToast && <div className="toast toast-top toast-center">
+            <div className="alert alert-success">
+                <span>Profile saved successfully</span>
+            </div>
+        </div>}
+        </>
+        
     );
 }
 

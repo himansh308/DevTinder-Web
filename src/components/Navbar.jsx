@@ -39,6 +39,7 @@ function Navbar() {
           { user && 
             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
               <li><Link to="/profile/edit">Profile</Link></li>
+              <li><Link to="/connections">My Connections</Link></li>
               <li><a onClick={handleLogout}>Logout</a></li>
             </ul>
           }

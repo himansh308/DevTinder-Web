@@ -2,12 +2,12 @@ function UserCard({ user, onInterested, onIgnored }) {
     const { firstName, lastName, photoUrl, age, gender, skills } = user;
 
     return (
-        <div className="card w-96 bg-base-100 shadow-xl">
-            <figure className="h-72 overflow-hidden">
+        <div className="card w-96 bg-base-100 shadow-xl overflow-hidden rounded-2xl">
+            <figure className="h-80">
                 <img
                     src={photoUrl}
                     alt={`${firstName} ${lastName}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-top"
                 />
             </figure>
             <div className="card-body">
