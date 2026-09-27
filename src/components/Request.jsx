@@ -23,7 +23,7 @@ function Request(){
             console.log(err.message)
         }
     }
-
+    
    const handleRequestButtonClicked = async(status,requestId)=>{
 
         try{
@@ -45,6 +45,10 @@ function Request(){
     useEffect(()=>{
         pendingRequest()
     },[])
+
+    if(requests.length === 0){
+        return <div>No pending request.</div>
+    }
     return (
         <>
         {requests.map((request)=>{
