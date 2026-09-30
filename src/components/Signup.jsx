@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Signup() {
     
@@ -91,11 +91,14 @@ function Signup() {
                     </select>
 
                     <div className="card-actions justify-center py-4">
-                        <button 
+                        <button
                             className="btn btn-primary"
                             onClick={handleSignUpClick}
                         >Sign Up</button>
                     </div>
+                    <p className="text-center text-sm">
+                        Already have an account? <Link to="/login" className="link link-primary">Login</Link>
+                    </p>
                 </div>
             </div>
         </div>

@@ -14,6 +14,7 @@ function Navbar() {
 
   const [confirmText, setConfirmText] = useState("");
   const [deleteError, setDeleteError] = useState("");
+  const [showDeleteToast, setShowDeleteToast] = useState(false);
 
   const handleLogout = async()=>{
     try{
@@ -33,7 +34,10 @@ function Navbar() {
 
       document.getElementById('delete_modal').close();
       dispatch(removeUser());
-      return navigate('/login')
+      navigate('/login');
+
+      setShowDeleteToast(true);
+      setTimeout(() => setShowDeleteToast(false), 3000);
     }
     catch(err){
       console.log(err)
@@ -109,6 +113,14 @@ function Navbar() {
           </div>
         </div>
     </dialog>
+
+    {showDeleteToast &&
+        <div className="toast toast-top toast-center">
+            <div className="alert alert-error">
+                <span>Account deleted successfully</span>
+            </div>
+        </div>
+    }
     </>
   )
 }

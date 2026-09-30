@@ -1,7 +1,7 @@
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
@@ -12,6 +12,9 @@ function Body(){
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const PUBLIC_ROUTES = ['/login', '/signup'];
 
     const fetchUser = async()=>{
         try{
@@ -24,7 +27,7 @@ function Body(){
             }
         }
         catch(err){
-            if(err.response?.status === 401){
+            if(err.response?.status === 401 && !PUBLIC_ROUTES.includes(location.pathname)){
                 navigate('/login');
             }
             console.log(err.message);

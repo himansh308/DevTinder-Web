@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
 
@@ -60,13 +60,16 @@ function Login(){
                         onChange={(e)=> setPassword(e.target.value)}
                     /> 
                     <div className="card-actions justify-center py-4">
-                    <button 
+                    <button
                         className="btn btn-primary"
                         onClick={handleClick}
                         >Login
-    
+
                     </button>
                     </div>
+                    <p className="text-center text-sm">
+                        New to DevTinder? <Link to="/signup" className="link link-primary">Sign Up</Link>
+                    </p>
                 </div>
             </div>
         </div>
