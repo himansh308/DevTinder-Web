@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../utils/userSlice";
 import { useNavigate, Link } from "react-router-dom";
@@ -7,9 +8,12 @@ function Navbar() {
   const user = useSelector((store)=>{
     return store.user
   });
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [confirmText, setConfirmText] = useState("");
+  const [deleteError, setDeleteError] = useState("");
 
   const handleLogout = async()=>{
     try{
@@ -20,6 +24,20 @@ function Navbar() {
     }
     catch(err){
       console.log(err)
+    }
+  }
+
+  const handleDeleteAccount = async()=>{
+    try{
+      await axios.delete('http://localhost:7777/delete', {withCredentials:true})
+
+      document.getElementById('delete_modal').close();
+      dispatch(removeUser());
+      return navigate('/login')
+    }
+    catch(err){
+      console.log(err)
+      setDeleteError("Something went wrong while deleting your account. Please try again.")
     }
   }
   return (
@@ -42,12 +60,55 @@ function Navbar() {
               <li><Link to="/connections">My Connections</Link></li>
               <li><Link to='/requests'>Requests</Link></li>
               <li><a onClick={handleLogout}>Logout</a></li>
+              <li className="my-1"><hr /></li>
+              <li>
+                <a
+                  className="text-error"
+                  onClick={() => {
+                    setDeleteError("");
+                    document.getElementById('delete_modal').showModal();
+                  }}
+                >
+                  Delete Account
+                </a>
+              </li>
             </ul>
           }
         </div>
       </div>
     </div>
-    
+    <dialog id="delete_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg text-error">Delete Account</h3>
+          <p className="py-4">
+            This action is permanent and cannot be undone. Type <span className="font-bold">DELETE</span> to confirm.
+          </p>
+
+          <input
+            type="text"
+            placeholder="Type DELETE to confirm"
+            className="input input-bordered w-full"
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+          />
+
+          {deleteError && <p className="text-error text-sm mt-2">{deleteError}</p>}
+
+          <div className="modal-action">
+            <form method="dialog" className="flex gap-2">
+              <button className="btn" onClick={() => { setConfirmText(""); setDeleteError(""); }}>Cancel</button>
+            </form>
+            <button
+              type="button"
+              className="btn btn-error"
+              disabled={confirmText !== "DELETE"}
+              onClick={handleDeleteAccount}
+            >
+              Delete My Account
+            </button>
+          </div>
+        </div>
+    </dialog>
     </>
   )
 }
