@@ -1,14 +1,26 @@
-function UserCard({ user, onInterested, onIgnored }) {
-    const { firstName, lastName, photoUrl, age, gender, skills } = user;
+import { useNavigate } from "react-router-dom";
 
+function UserCard({ user, onInterested, onIgnored }) {
+    const { firstName, lastName, photoUrl, age, gender, skills, mutualConnectionsCount } = user;
+    const navigate = useNavigate();
     return (
         <div className="card w-96 bg-base-100 shadow-xl overflow-hidden rounded-2xl">
-            <figure className="h-80">
+            <figure className="h-80 relative">
                 <img
                     src={photoUrl}
                     alt={`${firstName} ${lastName}`}
                     className="w-full h-full object-cover object-top"
                 />
+
+                {mutualConnectionsCount > 0 && (
+                    <button
+                        className="badge badge-lg badge-neutral absolute top-3 right-3"
+                        
+                        onClick={()=> navigate(`/mututalConnections/${user._id}`)}
+                    >
+                        🤝 {mutualConnectionsCount} mutual
+                    </button>
+                )}
             </figure>
             <div className="card-body">
                 <h2 className="card-title">

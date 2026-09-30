@@ -64,8 +64,7 @@ function Navbar() {
               <li><Link to="/connections">My Connections</Link></li>
               <li><Link to='/requests'>Requests</Link></li>
               <li><a onClick={handleLogout}>Logout</a></li>
-              <li className="my-1"><hr /></li>
-              <li>
+              <li className="border-t border-base-200 mt-1 pt-1">
                 <a
                   className="text-error"
                   onClick={() => {
