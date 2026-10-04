@@ -1,7 +1,8 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { shortenPlaceName } from "../utils/locationUtils";
 import { useNavigate } from "react-router-dom";
 
 function ProfilePreferences() {
@@ -16,6 +17,12 @@ function ProfilePreferences() {
     const [maxDistance , setMaxDistance] = useState(user?.maxDistance || 10)
     const [error , setError] = useState('');
     const [showToast , setShowToast] = useState(false);
+
+    const [searchText, setSearchText] = useState('');
+    const [places, setPlaces] = useState([]);
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    const latestQueryRef = useRef('');
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -29,6 +36,48 @@ function ProfilePreferences() {
         }
     }
 
+    const handleSearchTextChange = (e) => {
+        const value = e.target.value;
+        setSearchText(value);
+        latestQueryRef.current = value;
+    }
+
+    const handleSelectPlace = (place) => {
+        setSelectedLocation({...place, autoSync:false});
+        setSearchText(place.display_name);
+        setPlaces([]);
+    }
+
+    const handleUseCurrentLocation = () => {
+        setError('');
+        navigator.geolocation.getCurrentPosition(
+            async(position)=>{
+                try{
+                    const longitude = position.coords.longitude;
+                    const latitude = position.coords.latitude;
+
+                    const reverseResponse = await axios.get(
+                        `http://localhost:7777/location/reverse?lat=${latitude}&lon=${longitude}`,
+                        {withCredentials:true}
+                    );
+
+                    const displayName = reverseResponse.data.data.display_name;
+
+                    setSelectedLocation({display_name:displayName, lat:latitude, lon:longitude, autoSync:true});
+                    setSearchText(displayName);
+                    setPlaces([]);
+                }
+                catch(err){
+                    console.log(err.message);
+                }
+            },
+            (error)=>{
+                console.log(error.message);
+                setError("Couldn't get your current location. Please check your browser's permission settings.");
+            }
+        );
+    }
+
     const handleProfilePreferenceSaveButton = async()=>{
         setError('');
         try{
@@ -40,6 +89,20 @@ function ProfilePreferences() {
             } , {withCredentials:true});
 
             dispatch(addUser(response.data.data));
+
+            if(selectedLocation){
+                const locationResponse = await axios.patch('http://localhost:7777/user/location', {
+                    location:{
+                        coordinates:[Number(selectedLocation.lon), Number(selectedLocation.lat)]
+                    },
+                    locationLabel: shortenPlaceName(selectedLocation.display_name),
+                    locationAutoSync: selectedLocation.autoSync
+                } , {withCredentials:true});
+
+                dispatch(addUser(locationResponse.data.data));
+                setSelectedLocation(null);
+            }
+
             setShowToast(true);
             setTimeout(() => setShowToast(false), 3000);
             navigate('/feed')
@@ -58,6 +121,31 @@ function ProfilePreferences() {
             setMaxDistance(user.maxDistance || 10);
         }
     },[user])
+
+    useEffect(()=>{
+        if(searchText.trim().length === 0){
+            setPlaces([]);
+            return;
+        }
+
+        const timer = setTimeout(async()=>{
+            try{
+                const response = await axios.get(
+                    `http://localhost:7777/location/search?q=${encodeURIComponent(searchText)}`,
+                    {withCredentials:true}
+                );
+
+                if(searchText === latestQueryRef.current){
+                    setPlaces(response.data.data);
+                }
+            }
+            catch(err){
+                console.log(err.message);
+            }
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    },[searchText])
     return (
         <div className="flex justify-center mt-10">
             <div className="card w-96 bg-base-100 shadow-xl">
@@ -121,6 +209,38 @@ function ProfilePreferences() {
                         value={maxDistance}
                         onChange={(e) => setMaxDistance(e.target.value)}
                     />
+
+                    <label className="label">Your Location</label>
+
+                    {user?.locationLabel &&
+                        <p className="text-sm opacity-70">Current location: {user.locationLabel}</p>
+                    }
+
+                    <input
+                        type="text"
+                        placeholder="Search for a place (e.g. Nehru Place)"
+                        className="input input-bordered w-full"
+                        value={searchText}
+                        onChange={handleSearchTextChange}
+                    />
+
+                    {places.length > 0 &&
+                        <ul className="menu bg-base-100 rounded-box shadow w-full">
+                            {places.map((place) => (
+                                <li key={place.lat + place.lon}>
+                                    <a onClick={() => handleSelectPlace(place)}>{place.display_name}</a>
+                                </li>
+                            ))}
+                        </ul>
+                    }
+
+                    <button
+                        type="button"
+                        className="btn btn-ghost btn-sm self-start"
+                        onClick={handleUseCurrentLocation}
+                    >
+                        📍 Use My Current Location
+                    </button>
 
                     {error && <p className="text-error text-sm mt-2">{error}</p>}
 

@@ -5,6 +5,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { shortenPlaceName } from "../utils/locationUtils";
 import { useEffect, useState } from "react";
 
 
@@ -26,6 +27,7 @@ function Body(){
 
             if(response){
                 dispatch(addUser(response.data.data))
+                return response.data.data;
             }
         }
         catch(err){
@@ -43,12 +45,19 @@ function Body(){
                     const longitude = position.coords.longitude;
                     const latitude = position.coords.latitude;
 
-                    await axios.patch('http://localhost:7777/user/location', {
+                    const reverseResponse = await axios.get(
+                        `http://localhost:7777/location/reverse?lat=${latitude}&lon=${longitude}`,
+                        {withCredentials:true}
+                    );
+
+                    const locationResponse = await axios.patch('http://localhost:7777/user/location', {
                         location:{
                             coordinates:[longitude, latitude]
-                        }
+                        },
+                        locationLabel: shortenPlaceName(reverseResponse.data.data.display_name)
                     }, {withCredentials:true});
 
+                    dispatch(addUser(locationResponse.data.data));
                     setLocationErrorCode(null);
                 }
                 catch(err){
@@ -63,11 +72,15 @@ function Body(){
     }
 
     useEffect(()=>{
-        fetchUser();
-    },[])
+        const init = async()=>{
+            const fetchedUser = await fetchUser();
 
-    useEffect(()=>{
-        fetchAndUpdateLocation();
+            if(fetchedUser?.locationAutoSync !== false){
+                fetchAndUpdateLocation();
+            }
+        }
+
+        init();
     },[])
 
     return(
