@@ -49,7 +49,7 @@ function Navbar() {
 
     <div className="navbar bg-base-100 shadow-sm">
       <div className="flex-1">
-        <Link to="/" className="btn btn-ghost text-xl">DevTinder</Link>
+        <Link to="/feed" className="btn btn-ghost text-xl">DevTinder</Link>
       </div>
       <div className="flex-none">
         <div className="dropdown dropdown-hover dropdown-end">
@@ -60,7 +60,8 @@ function Navbar() {
           </div>
           { user && 
             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-              <li><Link to="/profile/edit">Profile</Link></li>
+              <li><Link to="/profile/edit">My Profile</Link></li>
+              <li><Link to={"/feed/preferences"}>Feed Preference</Link></li>
               <li><Link to="/connections">My Connections</Link></li>
               <li><Link to='/requests'>Requests</Link></li>
               <li><a onClick={handleLogout}>Logout</a></li>
@@ -75,6 +76,7 @@ function Navbar() {
                   Delete Account
                 </a>
               </li>
+              
             </ul>
           }
         </div>

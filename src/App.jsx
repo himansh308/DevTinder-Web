@@ -10,6 +10,7 @@ import EditProfile from './components/EditProfile';
 import Connections from './components/Connection';
 import Request from './components/Request';
 import MutualConnections from './components/MututalConnections';
+import ProfilePreferences from './components/ProfilePreferences';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
         <Route path = '/connections' element={<Connections/>}></Route>
         <Route path = '/requests' element={<Request/>}></Route>
         <Route path='/mututalConnections/:candidateId' element={<MutualConnections/>}></Route>
+        <Route path ='/feed/preferences' element={<ProfilePreferences/>}></Route>
       </Route>
     </Routes>
     </>
