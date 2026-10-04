@@ -93,6 +93,33 @@ function Login() {
 (event handlers, effects, etc.) — `<Navigate>` the component can only be used by literally
 rendering it in JSX, which isn't what you want for "redirect after this async thing succeeds."
 
+## A parent layout route's `useEffect`s run once per SESSION, not once per internal page visit
+
+Sharpening the "`Navbar`/`Footer` never re-mount across different URLs" point above: this
+means `Body.jsx`'s `useEffect(() => {...}, [])` hooks (fetching the user, fetching location)
+don't re-fire every time you click to a different page inside the app — only on a genuine full
+browser reload.
+
+**Walked through with real clicks, assuming `Body` wraps `/feed`, `/connections`, `/requests`:**
+1. Log in, land on `/feed`. `Body` mounts for the first time this session → its `useEffect`s
+   fire once.
+2. Click "My Connections" → URL changes `/feed` → `/connections`. Both are CHILD routes nested
+   inside the same parent `<Route path='/' element={<Body/>}>`. React Router only swaps what's
+   rendered inside `<Outlet/>` (unmounts `Feed`, mounts `Connections`) — `Body` itself is never
+   unmounted/remounted; it's the same component instance the whole time.
+3. Since `Body` never remounted, there's no new "mount" for its effects to fire on — they
+   already ran, once, and nothing happened that would make React run them again.
+4. Click "Requests" → same story, still no remount of `Body`.
+5. **Hit the browser's refresh button** (or type the URL fresh, or open a new tab) → THIS tears
+   down the entire React app and rebuilds it from scratch, including `Body` — a genuinely NEW
+   mount happens → the effects fire again.
+
+**The practical implication**: anything that should "run once per app usage" (fetch the
+logged-in user, try to refresh geolocation) belongs in `Body`'s effects specifically BECAUSE it
+sits at this level — anything placed in an individual page component (`Feed`, `Connections`)
+WOULD re-run every time you navigate back to that specific page, since those DO unmount/remount
+on every route change (only the shared parent layout survives navigation).
+
 ## Import case-sensitivity — a filename/import mismatch that only sometimes errors
 
 **Bug hit:**

@@ -5,7 +5,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 
 function Body(){
@@ -13,6 +13,8 @@ function Body(){
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+
+    const [locationErrorCode, setLocationErrorCode] = useState(null);
 
     const PUBLIC_ROUTES = ['/login', '/signup'];
 
@@ -34,16 +36,65 @@ function Body(){
         }
     }
 
+    const fetchAndUpdateLocation = ()=>{
+        navigator.geolocation.getCurrentPosition(
+            async(position)=>{
+                try{
+                    const longitude = position.coords.longitude;
+                    const latitude = position.coords.latitude;
+
+                    await axios.patch('http://localhost:7777/user/location', {
+                        location:{
+                            coordinates:[longitude, latitude]
+                        }
+                    }, {withCredentials:true});
+
+                    setLocationErrorCode(null);
+                }
+                catch(err){
+                    console.log(err.message);
+                }
+            },
+            (error)=>{
+                console.log(error.message);
+                setLocationErrorCode(error.code);
+            }
+        );
+    }
+
     useEffect(()=>{
         fetchUser();
     },[])
+
+    useEffect(()=>{
+        fetchAndUpdateLocation();
+    },[])
+
     return(
         <>
             <Navbar/>
+
+            {locationErrorCode === 1 &&
+                <div className="alert alert-warning flex justify-between">
+                    <span>You've blocked location access. Enable it in your browser's site settings to see matches near you.</span>
+                    <button className="btn btn-sm" onClick={() => setLocationErrorCode(null)}>Dismiss</button>
+                </div>
+            }
+
+            {locationErrorCode !== null && locationErrorCode !== 1 &&
+                <div className="alert alert-warning flex justify-between">
+                    <span>Couldn't get your location. Try again to see matches near you.</span>
+                    <div className="flex gap-2">
+                        <button className="btn btn-sm" onClick={fetchAndUpdateLocation}>Try Again</button>
+                        <button className="btn btn-sm" onClick={() => setLocationErrorCode(null)}>Dismiss</button>
+                    </div>
+                </div>
+            }
+
             <Outlet/>
             <Footer/>
         </>
-        
+
     )
 }
 
