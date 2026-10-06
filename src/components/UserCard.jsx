@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 function UserCard({ user, onInterested, onIgnored }) {
-    const { firstName, lastName, photoUrl, age, gender, skills, mutualConnectionsCount } = user;
+    const { firstName, lastName, photoUrl, age, gender, skills, about, mutualConnectionsCount } = user;
     const navigate = useNavigate();
     return (
         <div className="card w-96 bg-base-100 shadow-xl overflow-hidden rounded-2xl">
@@ -28,6 +28,8 @@ function UserCard({ user, onInterested, onIgnored }) {
                     {age && <span className="text-base font-normal ml-1">, {age}</span>}
                 </h2>
                 {gender && <p className="text-sm opacity-70">{gender}</p>}
+
+                {about && <p className="text-sm mt-2 whitespace-pre-line">{about}</p>}
 
                 {skills?.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">

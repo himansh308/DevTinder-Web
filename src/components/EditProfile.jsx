@@ -16,6 +16,7 @@ function EditProfile() {
     const [age , setAge] = useState(user?.age);
     const [photoUrl , setPhotoUrl] = useState(user?.photoUrl);
     const [skills , setSkills] = useState(user?.skills ? user.skills.join(", ") : "");
+    const [about , setAbout] = useState(user?.about || "");
     const [error, setError] = useState("");
     const [showToast , setShowToast] = useState(false);
 
@@ -27,6 +28,7 @@ function EditProfile() {
             setAge(user.age);
             setPhotoUrl(user.photoUrl);
             setSkills(user.skills ? user.skills.join(", ") : "");
+            setAbout(user.about || "");
         }
     },[user])
 
@@ -40,6 +42,7 @@ function EditProfile() {
         age,
         photoUrl,
         gender: user.gender,
+        about,
         skills: skills.split(",").map((skill) => skill.trim()).filter((skill) => skill.length > 0)
     };
 
@@ -52,7 +55,8 @@ function EditProfile() {
                     lastName,
                     age,
                     photoUrl,
-                    skills:previewUser.skills
+                    skills:previewUser.skills,
+                    about
                 },
                 {withCredentials:true})
 
@@ -116,6 +120,16 @@ function EditProfile() {
                         value={skills}
                         onChange={(e)=> setSkills(e.target.value)}
                     />
+
+                    <label className="label">About Me</label>
+                    <textarea
+                        className="textarea textarea-bordered w-full h-24"
+                        placeholder="Tell people a little about yourself"
+                        maxLength={300}
+                        value={about}
+                        onChange={(e)=> setAbout(e.target.value)}
+                    />
+                    <p className="text-xs opacity-60 text-right">{about.length}/300</p>
 
                     {error && <p className="text-error text-sm mt-2">{error}</p>}
 
