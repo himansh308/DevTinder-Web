@@ -16,12 +16,12 @@ function ProfilePreferences() {
     const [maxAge , setMaxAge] = useState(user?.maxAge || 60);
     const [maxDistance , setMaxDistance] = useState(user?.maxDistance || 10)
     const [error , setError] = useState('');
-    const [showToast , setShowToast] = useState(false);
 
     const [searchText, setSearchText] = useState('');
     const [places, setPlaces] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const latestQueryRef = useRef('');
+    const skipNextSearchRef = useRef(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -40,10 +40,12 @@ function ProfilePreferences() {
         const value = e.target.value;
         setSearchText(value);
         latestQueryRef.current = value;
+        skipNextSearchRef.current = false;
     }
 
     const handleSelectPlace = (place) => {
         setSelectedLocation({...place, autoSync:false});
+        skipNextSearchRef.current = true;
         setSearchText(place.display_name);
         setPlaces([]);
     }
@@ -64,6 +66,7 @@ function ProfilePreferences() {
                     const displayName = reverseResponse.data.data.display_name;
 
                     setSelectedLocation({display_name:displayName, lat:latitude, lon:longitude, autoSync:true});
+                    skipNextSearchRef.current = true;
                     setSearchText(displayName);
                     setPlaces([]);
                 }
@@ -103,9 +106,7 @@ function ProfilePreferences() {
                 setSelectedLocation(null);
             }
 
-            setShowToast(true);
-            setTimeout(() => setShowToast(false), 3000);
-            navigate('/feed')
+            navigate('/feed', { state:{ toast:"Preferences saved successfully" } });
         }
         catch(err){
             setError(err.response?.data || "Something went wrong");
@@ -123,6 +124,12 @@ function ProfilePreferences() {
     },[user])
 
     useEffect(()=>{
+        // text was filled in by picking a place, not typed — nothing to search
+        if(skipNextSearchRef.current){
+            skipNextSearchRef.current = false;
+            return;
+        }
+
         if(searchText.trim().length === 0){
             setPlaces([]);
             return;
@@ -254,14 +261,6 @@ function ProfilePreferences() {
                     </div>
                 </div>
             </div>
-
-            {showToast &&
-                <div className="toast toast-top toast-center">
-                    <div className="alert alert-success">
-                        <span>Preferences saved successfully</span>
-                    </div>
-                </div>
-            }
         </div>
     );
 }

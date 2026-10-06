@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addFeed, removeUserFromFeed } from "../utils/feedSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import UserCard from "./UserCard";
 
 function Feed() {
@@ -10,6 +11,9 @@ function Feed() {
         return store.feed
     })
     const dispatch = useDispatch();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [toastMessage, setToastMessage] = useState(location.state?.toast || null);
 
     const fetchFeed = async() =>{
         
@@ -46,6 +50,19 @@ function Feed() {
 
     },[])
 
+    useEffect(()=>{
+        // clear it so a refresh or back-navigation doesn't show it again
+        if(location.state?.toast){
+            navigate(location.pathname, { replace:true, state:null });
+        }
+    },[location.state, location.pathname, navigate])
+
+    useEffect(()=>{
+        if(!toastMessage) return;
+        const timer = setTimeout(() => setToastMessage(null), 3000);
+        return () => clearTimeout(timer);
+    },[toastMessage])
+
 
     return(
         <>
@@ -59,10 +76,18 @@ function Feed() {
                     onIgnored ={()=> handleSendRequest("ignored" , feed[0]._id)}>
                 </UserCard>
             )
-            
-        
+
+
         }
-        
+
+        {toastMessage &&
+            <div className="toast toast-top toast-center">
+                <div className="alert alert-success">
+                    <span>{toastMessage}</span>
+                </div>
+            </div>
+        }
+
         </>
     )
 }
