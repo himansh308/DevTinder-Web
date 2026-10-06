@@ -1,9 +1,9 @@
 # Debounce vs. Throttle, and Sizing a Delay Against a Real Rate Limit
 
-Design discussion ahead of building the location search-as-you-type feature
-(`ProfilePreferences.jsx`, calling the backend's `/location/search` → Nominatim proxy). Not yet
-implemented as of this note — captured here because the reasoning matters more than the code
-and shouldn't need re-deriving later.
+Design discussion for the location search-as-you-type feature (`ProfilePreferences.jsx`,
+calling the backend's `/location/search` → Nominatim proxy). Written before it was built;
+it's now implemented. For the final code, real traces, and the clearer "photo vs whiteboard"
+explanation of the stale-reply guard, see `location-feature-end-to-end.md`.
 
 ## Debounce vs. throttle — picking the right one for search-as-you-type
 
