@@ -6,7 +6,7 @@ import { addUser } from "../utils/userSlice";
 
 function Login(){
     const [emailId , setEmailId] = useState("you@test.com");
-    const [password , setPassword] = useState("Test123@#$");
+    const [password , setPassword] = useState("Test1234@#$");
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -58,7 +58,10 @@ function Login(){
                         className="input input-bordered w-full"
                         value={password}
                         onChange={(e)=> setPassword(e.target.value)}
-                    /> 
+                    />
+                    <p className="text-right text-sm">
+                        <Link to='/forgotPassword' className="link link-hover link-primary">Forgot Password?</Link>
+                    </p>
                     <div className="card-actions justify-center py-4">
                     <button
                         className="btn btn-primary"
@@ -67,7 +70,7 @@ function Login(){
 
                     </button>
                     </div>
-                    <p className="text-center text-sm">
+                    <p className="text-right text-sm">
                         New to DevTinder? <Link to="/signup" className="link link-primary">Sign Up</Link>
                     </p>
                 </div>

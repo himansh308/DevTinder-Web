@@ -17,7 +17,7 @@ function Body(){
 
     const [locationErrorCode, setLocationErrorCode] = useState(null);
 
-    const PUBLIC_ROUTES = ['/login', '/signup'];
+    const PUBLIC_ROUTES = ['/login', '/signup' , '/forgotPassword'];
 
     const fetchUser = async()=>{
         try{
