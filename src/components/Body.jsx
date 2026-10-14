@@ -1,9 +1,9 @@
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { shortenPlaceName } from "../utils/locationUtils";
 import { useEffect, useState } from "react";
@@ -12,12 +12,14 @@ import { useEffect, useState } from "react";
 function Body(){
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const location = useLocation();
+    const user = useSelector((store) => store.user);
 
     const [locationErrorCode, setLocationErrorCode] = useState(null);
+    const [authChecked, setAuthChecked] = useState(false);
 
     const PUBLIC_ROUTES = ['/login', '/signup' , '/forgotPassword'];
+    const isPublicPage = PUBLIC_ROUTES.includes(location.pathname);
 
     const fetchUser = async()=>{
         try{
@@ -31,10 +33,10 @@ function Body(){
             }
         }
         catch(err){
-            if(err.response?.status === 401 && !PUBLIC_ROUTES.includes(location.pathname)){
-                navigate('/login');
-            }
             console.log(err.message);
+        }
+        finally{
+            setAuthChecked(true);
         }
     }
 
@@ -75,7 +77,7 @@ function Body(){
         const init = async()=>{
             const fetchedUser = await fetchUser();
 
-            if(fetchedUser?.locationAutoSync !== false){
+            if(fetchedUser && fetchedUser.locationAutoSync !== false){
                 fetchAndUpdateLocation();
             }
         }
@@ -104,7 +106,14 @@ function Body(){
                 </div>
             }
 
-            <Outlet/>
+            {isPublicPage
+                ? <Outlet/>
+                : !authChecked
+                    ? <div className="flex justify-center mt-20"><span className="loading loading-spinner loading-lg"></span></div>
+                    : user
+                        ? <Outlet/>
+                        : <Navigate to="/login" replace />
+            }
             <Footer/>
         </>
 

@@ -49,7 +49,10 @@ function Navbar() {
 
     <div className="navbar bg-base-100 shadow-sm">
       <div className="flex-1">
-        <Link to="/feed" className="btn btn-ghost text-xl">DevTinder</Link>
+        {user
+          ? <Link to="/feed" className="btn btn-ghost text-xl">DevTinder</Link>
+          : <span className="btn btn-ghost text-xl pointer-events-none">DevTinder</span>
+        }
       </div>
       <div className="flex-none">
         <div className="dropdown dropdown-hover dropdown-end">
