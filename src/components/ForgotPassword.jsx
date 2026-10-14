@@ -56,6 +56,7 @@ function ForgotPassword(){
                             <label className="label">Email ID</label>
                             <input
                                 type="email"
+                                autoComplete="email"
                                 placeholder="Please type your email here"
                                 className="input input-bordered w-full"
                                 value={email}
@@ -83,6 +84,7 @@ function ForgotPassword(){
                             <label className="label">OTP</label>
                             <input
                                 type="text"
+                                autoComplete="one-time-code"
                                 inputMode="numeric"
                                 maxLength={6}
                                 placeholder="6-digit OTP"
@@ -94,6 +96,7 @@ function ForgotPassword(){
                             <label className="label">New Password</label>
                             <input
                                 type="password"
+                                autoComplete="new-password"
                                 placeholder="New password"
                                 className="input input-bordered w-full"
                                 value={newPassword}
@@ -103,6 +106,7 @@ function ForgotPassword(){
                             <label className="label">Confirm Password</label>
                             <input
                                 type="password"
+                                autoComplete="new-password"
                                 placeholder="Confirm new password"
                                 className="input input-bordered w-full"
                                 value={confirmPassword}

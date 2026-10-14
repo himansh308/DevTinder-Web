@@ -45,6 +45,7 @@ function Signup() {
                     <label className="label">First Name</label>
                     <input
                         type="text"
+                        autoComplete="given-name"
                         placeholder="Please type your first name here"
                         className="input input-bordered w-full"
                         value={firstName}
@@ -54,6 +55,7 @@ function Signup() {
                     <label className="label">Last Name</label>
                     <input
                         type="text"
+                        autoComplete="family-name"
                         placeholder="Please type your last name here"
                         className="input input-bordered w-full"
                         value={lastName}
@@ -63,6 +65,7 @@ function Signup() {
                     <label className="label">Email ID</label>
                     <input
                         type="email"
+                        autoComplete="email"
                         placeholder="Please type your email here"
                         className="input input-bordered w-full"
                         value={email}
@@ -72,6 +75,7 @@ function Signup() {
                     <label className="label">Password</label>
                     <input
                         type="password"
+                        autoComplete="new-password"
                         placeholder="Please type your password here"
                         className="input input-bordered w-full"
                         value={password}

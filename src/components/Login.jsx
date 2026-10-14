@@ -46,6 +46,7 @@ function Login(){
                     <label className="label">Email ID</label>
                     <input 
                         type='email'   
+                        autoComplete="username"
                         placeholder="Please type your email here"
                         className="input input-bordered w-full"
                         value={emailId}
@@ -54,6 +55,7 @@ function Login(){
                     <label className="label">password</label>
                     <input 
                         type="password"
+                        autoComplete="current-password"
                         placeholder="Please type your password here"
                         className="input input-bordered w-full"
                         value={password}
