@@ -1,5 +1,8 @@
 # DevTinder Frontend Learning Notes
 
+> **Start here on a new machine or in a new session:** the backend repo's `docs/handoff.md`
+> (setup for both repos, test accounts, current state, what's next).
+
 Personal study notes from building the DevTinder frontend (React + Vite, Tailwind/DaisyUI,
 React Router, Redux Toolkit, Axios/CORS auth wiring) — same spirit as the backend's `notes/`
 folder: real code, real bugs actually hit, explained the way they were worked through live.
